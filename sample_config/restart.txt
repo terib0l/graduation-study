@@ -1,0 +1,5 @@
+#!/bin/sh
+
+#system再起動
+systemctl restart wowhoneypot.service
+systemctl restart wowhoneypotssl.service

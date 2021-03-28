@@ -1,0 +1,175 @@
+---initialization
+
+# set system host-name hw
+
+% IPアドレスの付与　eth0：インターネット側、eth1：プライベートネットワーク側
+# delete interfaces ethernet 'eth0' address 'dhcp'
+# set interfaces ethernet eth0 address 133.14.14.244/24
+# set interfaces ethernet eth0 description 'outside'
+# set interfaces ethernet eth1 address 192.168.0.1/24
+# set interfaces ethernet eth1 description 'inside'
+
+# set system gateway-address 133.14.14.254
+# set system name-server '8.8.8.8'
+
+# set service ssh port 22
+
+# set system time-zone Asia/Tokyo
+# set system ntp server ntp.nict.jp
+
+# vi /etc/default/keyboard
+  XKBMODEL=”pc106”
+  XKBLAYOUT=”jp”
+
+% DNSフォワーダ設定
+  192.168.0.0/24にあるマシンはDNSとして192.168.0.1を指定することで名前解決可能
+# set service dns forwarding cache-size '0'
+# set service dns forwarding listen-on 'eth1'
+# set service dns forwarding name-server '8.8.8.8'
+
+% snat設定
+  192.168.0.0/24にあるマシンはゲートウェイを192.168.0.1を指定することで外にいける
+# set nat source rule 1 outbound-interface 'eth0'
+# set nat source rule 1 source address '192.168.0.0/24'
+# set nat source rule 1 translation address masquerade
+
+% dnat設定
+　まずはIPの付与
+# set interfaces ethernet eth0 address 133.14.14.248/24
+# set interfaces ethernet eth0 address 133.14.14.247/24
+# set interfaces ethernet eth0 address 133.14.14.246/24
+
+  133.14.14.248(eth0)へのアクセスを192.168.0.8にNATする
+# set nat destination rule 10 destination address 133.14.14.248
+# set nat destination rule 10 inbound-interface eth0
+# set nat destination rule 10 translation address 192.168.0.8
+# set nat destination rule 10 protocol tcp
+
+  133.14.14.247(eth0)からのアクセスを192.168.0.7にNATする
+# set nat destination rule 11 destination address 133.14.14.247
+# set nat destination rule 11 inbound-interface eth0
+# set nat destination rule 11 translation address 192.168.0.7
+# set nat destination rule 11 protocol tcp
+
+  133.14.14.246(eth0)からのアクセスを192.168.0.6にNATする
+# set nat destination rule 12 destination address 133.14.14.246
+# set nat destination rule 12 inbound-interface eth0
+# set nat destination rule 12 translation address 192.168.0.6
+# set nat destination rule 12 protocol tcp
+
+% FW設定
+  ハニーポットのアドレスグループを定義する
+# set firewall group address-group HP-ADD address 192.168.0.6-192.168.0.8
+
+  インターネットからルーターへの設定(ping,22,53の通信を許可)
+# set firewall name FW-LOCAL default-action drop
+# set firewall name FW-LOCAL rule 20 action accept
+# set firewall name FW-LOCAL rule 20 protocol icmp
+# set firewall name FW-LOCAL rule 21 action accept
+# set firewall name FW-LOCAL rule 21 destination address '133.14.14.244'
+# set firewall name FW-LOCAL rule 21 destination port '22'
+////# set firewall name FW-LOCAL rule 21 source port '22'
+# set firewall name FW-LOCAL rule 21 protocol 'tcp'
+# set firewall name FW-LOCAL rule 21 state new enable
+# set firewall name FW-LOCAL rule 21 state established enable
+# set firewall name FW-LOCAL rule 22 action accept
+////# set firewall name FW-LOCAL rule 22 destination port '53'
+# set firewall name FW-LOCAL rule 22 source port '53'
+# set firewall name FW-LOCAL rule 22 protocol 'tcp_udp'
+# set firewall name FW-LOCAL rule 22 state new enable
+# set firewall name FW-LOCAL rule 22 state established enable
+# set interfaces ethernet eth0 firewall local name FW-LOCAL
+
+  インターネットからPRIVATEへの設定(ハニポへping,22,80,443の通信を許可)
+# set firewall name FW-IN default-action drop
+# set firewall name FW-IN rule 30 action accept
+# set firewall name FW-IN rule 30 protocol icmp
+# set firewall name FW-IN rule 31 action accept
+# set firewall name FW-IN rule 31 destination group address-group HP-ADD
+# set firewall name FW-IN rule 31 destination port '22,80,443'
+# set firewall name FW-IN rule 31 protocol 'tcp'
+# set firewall name FW-IN rule 31 state new enable
+# set firewall name FW-IN rule 31 state established enable
+//# set firewall name FW-IN rule 32 action accept
+//# set firewall name FW-IN rule 32 source port '80'
+//# set firewall name FW-IN rule 32 protocol 'tcp'
+//# set firewall name FW-IN rule 32 state established enable
+# set interfaces ethernet eth0 firewall in name FW-IN
+
+  PRIVATEからインターネットへの設定(ステートフル設定、ハニポからの通信は禁止)
+# set firewall name FW-OUT default-action drop
+# set firewall name FW-OUT rule 40 action accept
+# set firewall name FW-OUT rule 40 state established enable
+# set firewall name FW-OUT rule 41 action accept
+# set firewall name FW-OUT rule 41 protocol icmp
+# set firewall name FW-OUT rule 42 action accept
+//# set firewall name FW-OUT rule 42 destination port '80'
+//# set firewall name FW-OUT rule 42 protocol 'tcp'
+//# set firewall name FW-OUT rule 42 state new enable
+# set interfaces ethernet eth0 firewall out name FW-OUT
+
+---------------------------------------------------------
+% 248だけネット上にあげる時に使ったルール
+# set firewall name FW-IN2 default-action drop
+# set firewall name FW-IN2 rule 100 action accept
+# set firewall name FW-IN2 rule 100 protocol icmp
+# set firewall name FW-IN2 rule 101 action accept
+# set firewall name FW-IN2 rule 101 destination address 192.168.0.8
+# set firewall name FW-IN2 rule 101 destination port '22,80,443'
+# set firewall name FW-IN2 rule 101 protocol 'tcp'
+# set firewall name FW-IN2 rule 101 state new enable
+# set firewall name FW-IN2 rule 101 state established enable
+# set interfaces ethernet eth0 firewall in name FW-IN2
+
+# set firewall name FW-OUT2 default-action drop
+# set firewall name FW-OUT2 rule 110 action accept
+# set firewall name FW-OUT2 rule 110 state established enable
+# set firewall name FW-OUT2 rule 110 source address 192.168.0.8
+# set firewall name FW-OUT2 rule 111 action accept
+# set firewall name FW-OUT2 rule 111 protocol icmp
+# set firewall name FW-OUT2 rule 111 source address 192.168.0.8
+# set firewall name FW-OUT2 rule 112 action accept
+# set firewall name FW-OUT2 rule 112 source port '5044'
+# set firewall name FW-OUT2 rule 112 protocol tcp_udp
+# set firewall name FW-OUT2 rule 112 source address 192.168.0.8
+# set firewall name FW-OUT2 rule 112 state new enable
+# set interfaces ethernet eth0 firewall out name FW-OUT2
+---------------------------------------------------------
+Memo
+- ハニポ運用時（アップデートの時のみに使うルール）
+  # delete firewall name FW-OUT rule 42
+  # delete firewall name FW-IN rule 32
+
+
+---unfinished
+* root's passwd
+* make blacklist
+
+
+---useful_command
+* commit
+* save
+* reboot
+* poweroff
+* exit
+* configure
+* show interface
+* show system gateway-address
+* show dns forwarding statistics
+* set console keymap
+* date
+* set nat destination rule 10 destination port 10022
+* set nat destination rule 10 translation port 22
+
+---works_cited
+install : https://ichibariki.com/entry/2018/10/28/174339
+  -> https://www.vyos.io (アクセス -> 登録・ログイン -> [Downloads] -> [VyOS 1.1.8 OVA] -> [vyos-1.1.8-amd64.ova])
+initialized : http://jsworld.jp/surasura/contents/net001/003/002.html
+snat, dnsforwarding : https://qiita.com/KI1208/items/584e306c15a30807d6b0
+dnat : https://vamdemicsystem.black/linux/【vyos】natルール追加してnatする
+fw : https://memo.saitodev.com/home/vyatta/
+	https://asakasa.gitbooks.io/for-ictsc6/content/network/vyos/vyos-firewall.html
+pseudo-eth : https://docs.vyos.io/en/latest/interfaces/pseudo-ethernet.html
+	https://docs.huihoo.com/vyatta/6.4/Vyatta-LANInterfaces_R6.4_v01.pdf
+	https://docs.vyos.io/en/latest/firewall.html
+all : https://wiki.vyos-users.jp/index.php/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%AC%E3%82%A4%E3%83%89

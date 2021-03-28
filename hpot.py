@@ -9,7 +9,6 @@ import geoip2.database
 import time
 #import datetime
 
-// API of 'GeoLite2'
 reader = geoip2.database.Reader('GeoLite2-City_20201027/GeoLite2-City.mmdb')
 save = None
 
