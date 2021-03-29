@@ -658,30 +658,23 @@ def pcapch(args):
                     if len(buf) <= 6:
                         pass
                     #　TLS\SSLとHTTP
+                    if tcp_src == 443 or tcp_dst == 443:
+                        #tls_rec, tls_access, tls_res = pc.tls(buf)
+                        tls_rec, tls_access = pc.tls(buf,ip_src)
                     else:
-                        if tcp_src == 443 or tcp_dst == 443:
-                            # 応急処置
-                            if "6sd_1123.pcap" in args and pck_count == 751:
-                                pass
-                            elif "6sd_1123.pcap" in args and pck_count == 759:
-                                pass
-                            else:
-                                #tls_rec, tls_access, tls_res = pc.tls(buf)
-                                tls_rec, tls_access = pc.tls(buf,ip_src)
+                        try:
+                            temp += hex(buf[1]).replace("0x","")
+                        except:
+                            continue
+                        http = ["4854","4745","504f","4845","4f50","434f","5055","4445"]
+                        if temp in http:
+                            tls_rec = "HTTP_Data"
                         else:
-                            try:
-                                temp += hex(buf[1]).replace("0x","")
-                            except:
-                                continue
-                            http = ["4854","4745","504f","4845","4f50","434f","5055","4445"]
-                            if temp in http:
+                            if "FIN" in flags:
                                 tls_rec = "HTTP_Data"
                             else:
-                                if "FIN" in flags:
-                                    tls_rec = "HTTP_Data"
-                                else:
-                                    pass
-                                    #tls_rec = "continuation"
+                                pass
+                                #tls_rec = "continuation"
 
                 #　SYN時の処理
                 if "SYN" in flags and "ACK" not in flags:
@@ -995,7 +988,6 @@ def final_integrate(path):
         file = "ireq-fi"
 
     print("make out in current directory as %s\n" % file)
-
 
     #　リスト {GET 20,45,70,71~ / POST / OTHER}
     get={}
@@ -2051,19 +2043,19 @@ desc = """ #研究用 #WOWHoneypot #HTTP #HTTPS #PCAP"""
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('-l','--logch',nargs=1,type=str,help="hpot.py -l 248sh/8sh_1015")
-    parser.add_argument('-ll','--logch_limited',nargs="+",type=str,help="hpot.py -ll 248sh/8sh_1015 ...")
-    parser.add_argument('-lf','--logch_find',nargs="+",type=str,help="hpot.py -lf 248sh/8sh_1015 ...")
-    parser.add_argument('-ln','--logchnum',nargs="+",type=str,help="hpot.py -ln 248sh/8sh_1015 ...")
-    parser.add_argument('-m','--make',nargs="+",type=str,help="hpot.py -m 248sh/8sh_1015 ...")
-    parser.add_argument('-i','--integrate',nargs='+',type=str,help="hpot.py -i reqs1015 reqs1016 ...")
-    parser.add_argument('-fi','--final_integrate',nargs='+',type=str,help="hpot.py -fi reqs1015 reqs1016 ...")
-    parser.add_argument('-d','--diff',nargs=2,help="hpot.py -d ireq ireqs")
-    parser.add_argument('-p','--pcapch',nargs=1,type=str,help="hpot.py -p 246sd/6sd_1015.pcap")
-    parser.add_argument('-cia','--c_ip_all',nargs='+',type=str,help="hpot.py -cia 248sh/8sh_1015 ...")
-    parser.add_argument('-cip','--c_ip_particular',nargs='+',type=str,help="hpot.py -cip 248sh/8sh_1015 ...")
-    parser.add_argument('-cpp','--c_pcapch_particular',nargs='+',type=str,help="hpot.py -cpp 246sd/6sd_1015.pcap ...")
-    parser.add_argument('-cppp','--c_pcapch_particular_plus',nargs='+',type=str,help="hpot.py -cppp 246sd/6sd_1015.pcap ...")
+    parser.add_argument('-l','--logch',nargs=1,type=str,help="python3 hpot.py -l sample_log/8_https_1208")
+    parser.add_argument('-ll','--logch_limited',nargs="+",type=str,help="python3 hpot.py -ll sample_log/8_https_1208 ...")
+    parser.add_argument('-lf','--logch_find',nargs="+",type=str,help="python3 hpot.py -lf sample_log/8_https_1208 ...")
+    parser.add_argument('-ln','--logchnum',nargs="+",type=str,help="python3 hpot.py -ln sample_log/8_https_1208 ...")
+    parser.add_argument('-m','--make',nargs="+",type=str,help="python3 hpot.py -m sample_log/8_https_1208 ...")
+    parser.add_argument('-i','--integrate',nargs='+',type=str,help="python3 hpot.py -i reqs1015 reqs1016 ...")
+    parser.add_argument('-fi','--final_integrate',nargs='+',type=str,help="python3 hpot.py -fi reqs1015 reqs1016 ...")
+    parser.add_argument('-d','--diff',nargs=2,help="python3 hpot.py -d ireq ireqs")
+    parser.add_argument('-p','--pcapch',nargs=1,type=str,help="python3 hpot.py -p sample_log/6_https_1208.pcap")
+    parser.add_argument('-cia','--c_ip_all',nargs='+',type=str,help="python3 hpot.py -cia sample_log/8_https_1208 ...")
+    parser.add_argument('-cip','--c_ip_particular',nargs='+',type=str,help="python3 hpot.py -cip sample_log/8_https_1208 ...")
+    parser.add_argument('-cpp','--c_pcapch_particular',nargs='+',type=str,help="python3 hpot.py -cpp sample_log/8_https_1208.pcap ...")
+    parser.add_argument('-cppp','--c_pcapch_particular_plus',nargs='+',type=str,help="python3 hpot.py -cppp sample_log/8_https_1208.pcap ...")
     args = parser.parse_args()
 
     if args.logch:
