@@ -9,10 +9,6 @@ I studied about honeypot on HTTPS when I'm a graduation student.
 * sample log
     * logfile
     * pcapfile
-* sample config
-    * honeypot config
-    * vyos config
 
 ## Reference
-WOWHoneypot  
-VyOS
+* WOWHoneypot
