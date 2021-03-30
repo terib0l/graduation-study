@@ -10,5 +10,9 @@ I studied about honeypot on HTTPS when I'm a graduation student.
     * logfile
     * pcapfile
 
+## How to use
+* -l    : 
+* -ll   : 
+
 ## Reference
 * WOWHoneypot
