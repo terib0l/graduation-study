@@ -567,7 +567,7 @@ def pcapch(args):
     global reader
     pc = PcapClass
     new = "pcapch.txt"
-    server = ["192.168.0.6","133.14.14.246","192.168.0.7","133.14.14.247","192.168.0.8","133.14.14.248","133.14.14.245"]
+    server = ["192.168.0.6","192.168.0.7","192.168.0.8"]
 
     #　パケットの番号、pcapヘッダの長さ、パケットヘッダの長さ
     pck_count = 0
@@ -885,184 +885,15 @@ def diff(a, b):
         print("need total.txt and total-s.txt\n")
         exit()
 
-def integrate(path):
-    if 's' in path[0]:
-        for p in path:
-            if 's' not in p:
-                print("args error!!\n")
-                exit(1)
-            else:
-                pass
-        file = "ireqs"
-    else:
-        for p in path:
-            if 's' in p:
-                print("args error!!\n")
-                exit(1)
-            else:
-                pass
-        file = "ireq"
-
-    print("make out in current directory as %s\n" % file)
-
-
-    #　リスト {GET 20,45,70,71~ / POST / OTHER}
-    get={}
-    get1={}
-    get2={}
-    get3={}
-    post={}
-    other={}
-
-    for p in path:
-        with open(p,'r') as f:
-            for s in f:
-                request, value = s.split("%%%%")
-                value = int(value)
-
-                if 'GET' in request[:7]:
-                    if len(request) <= 20:
-                        if request in get.keys():
-                            get[request] += value
-                        else:
-                            get[request] = value
-                    elif len(request) <= 45:
-                        if request in get1.keys():
-                            get1[request] += value
-                        else:
-                            get1[request] = value
-                    elif len(request) <= 70:
-                        if request in get2.keys():
-                            get2[request] += value
-                        else:
-                            get2[request] = value
-                    else:
-                        if request in get3.keys():
-                            get3[request] += value
-                        else:
-                            get3[request] = value
-                elif 'POST' in request[:7]:
-                    if request in post.keys():
-                        post[request] += value
-                    else:
-                        post[request] = value
-                else:
-                    if request in other.keys():
-                        other[request] += value
-                    else:
-                        other[request] = value
-            f.close()
-
-    with open(file, 'w') as total:
-        #　HTTPリクエストの統計を更新
-        for key, value in sorted(get.items()):
-            total.write(f'{key}%%%%{value}\n')
-        for key, value in sorted(get1.items()):
-            total.write(f'{key}%%%%{value}\n')
-        for key, value in sorted(get2.items()):
-            total.write(f'{key}%%%%{value}\n')
-        for key, value in sorted(get3.items()):
-            total.write(f'{key}%%%%{value}\n')
-        for key, value in sorted(post.items()):
-            total.write(f'{key}%%%%{value}\n')
-        for key, value in sorted(other.items()):
-            total.write(f'{key}%%%%{value}\n')
-        total.close()
-
-def final_integrate(path):
-    if 's' in path[0]:
-        for p in path:
-            if 's' not in p:
-                print("args error!!\n")
-                exit(1)
-            else:
-                pass
-        file = "ireqs-fi"
-    else:
-        for p in path:
-            if 's' in p:
-                print("args error!!\n")
-                exit(1)
-            else:
-                pass
-        file = "ireq-fi"
-
-    print("make out in current directory as %s\n" % file)
-
-    #　リスト {GET 20,45,70,71~ / POST / OTHER}
-    get={}
-    get1={}
-    get2={}
-    get3={}
-    post={}
-    other={}
-
-    for p in path:
-        with open(p,'r') as f:
-            for s in f:
-                request, value = s.split("%%%%")
-                value = int(value)
-
-                if 'GET' in request[:7]:
-                    if len(request) <= 20:
-                        if request in get.keys():
-                            if p not in get.values():
-                                get[request] += p[-1:]
-                        else:
-                            get[request] = p[-1:]
-                    elif len(request) <= 45:
-                        if request in get1.keys():
-                            if p not in get1.values():
-                                get1[request] += p[-1:]
-                        else:
-                            get1[request] = p[-1:]
-                    elif len(request) <= 70:
-                        if request in get2.keys():
-                            if p not in get2.values():
-                                get2[request] += p[-1:]
-                        else:
-                            get2[request] = p[-1:]
-                    else:
-                        if request in get3.keys():
-                            if p not in get3.values():
-                                get3[request] += p[-1:]
-                        else:
-                            get3[request] = p[-1:]
-                elif 'POST' in request[:7]:
-                    if request in post.keys():
-                        if p not in post.values():
-                            post[request] += p[-1:]
-                    else:
-                        post[request] = p[-1:]
-                else:
-                    if request in other.keys():
-                        if p not in other.values():
-                            other[request] += p[-1:]
-                    else:
-                        other[request] = p[-1:]
-            f.close()
-
-    with open(file, 'w') as total:
-        #　HTTPリクエストの統計を更新
-        for key, value in sorted(get.items()):
-            total.write(f'{key}\t{value}\n')
-        for key, value in sorted(get1.items()):
-            total.write(f'{key}\t{value}\n')
-        for key, value in sorted(get2.items()):
-            total.write(f'{key}\t{value}\n')
-        for key, value in sorted(get3.items()):
-            total.write(f'{key}\t{value}\n')
-        for key, value in sorted(post.items()):
-            total.write(f'{key}\t{value}\n')
-        for key, value in sorted(other.items()):
-            total.write(f'{key}\t{value}\n')
-        total.close()
-
 def make(path):
-    if 's' in path:
-        file = "reqs" + path[-4:]
+    if 'http' in path:
+        if '/' in path:
+            fdr = path.rfind('/')
+            file = path[fdr+1:]
+        file += "_request"
     else:
-        file = "req" + path[-4:]
+        printf("FILE NAME ERROR!")
+        exit(1)
 
     print("make out in current directory as %s\n" % file)
 
@@ -1131,6 +962,89 @@ def make(path):
             f.write(f'{key}%%%%{value}\n')
         f.close()
 
+def integrate(path):
+    if 'https' in path[0]:
+        for p in path:
+            if 'https' not in p:
+                print("args error!!\n")
+                exit(1)
+            else:
+                pass
+        file = "https_integrate_request"
+    else:
+        for p in path:
+            if 'https' in p:
+                print("args error!!\n")
+                exit(1)
+            else:
+                pass
+        file = "http_integrate_request"
+
+    print("make out in current directory as %s" % file)
+
+    #　リスト {GET 20,45,70,71~ / POST / OTHER}
+    get={}
+    get1={}
+    get2={}
+    get3={}
+    post={}
+    other={}
+
+    for p in path:
+        with open(p,'r') as f:
+            for s in f:
+                request, value = s.split("%%%%")
+                value = int(value)
+
+                if 'GET' in request[:7]:
+                    if len(request) <= 20:
+                        if request in get.keys():
+                            get[request] += value
+                        else:
+                            get[request] = value
+                    elif len(request) <= 45:
+                        if request in get1.keys():
+                            get1[request] += value
+                        else:
+                            get1[request] = value
+                    elif len(request) <= 70:
+                        if request in get2.keys():
+                            get2[request] += value
+                        else:
+                            get2[request] = value
+                    else:
+                        if request in get3.keys():
+                            get3[request] += value
+                        else:
+                            get3[request] = value
+                elif 'POST' in request[:7]:
+                    if request in post.keys():
+                        post[request] += value
+                    else:
+                        post[request] = value
+                else:
+                    if request in other.keys():
+                        other[request] += value
+                    else:
+                        other[request] = value
+            f.close()
+
+    with open(file, 'w') as total:
+        #　HTTPリクエストの統計を更新
+        for key, value in sorted(get.items()):
+            total.write(f'{key}%%%%{value}\n')
+        for key, value in sorted(get1.items()):
+            total.write(f'{key}%%%%{value}\n')
+        for key, value in sorted(get2.items()):
+            total.write(f'{key}%%%%{value}\n')
+        for key, value in sorted(get3.items()):
+            total.write(f'{key}%%%%{value}\n')
+        for key, value in sorted(post.items()):
+            total.write(f'{key}%%%%{value}\n')
+        for key, value in sorted(other.items()):
+            total.write(f'{key}%%%%{value}\n')
+        total.close()
+
 def logch(path):
     #　ゲットリクエストリスト
     request = {}
@@ -1169,7 +1083,7 @@ def logch(path):
 
             """
             #スプリットされたアクセスログの例
-            ['[2020-09-17 14:08:35+0900]', '193.118.53.194', '133.14.14.247:443', '"GET / HTTP/1.1"', '404', 'False', 'R0VUIC8gSFRUUC8xLjEKSG9zdDogMTMzLjE0LjE0LjI0NwpVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNjAuMC4zMTEyLjExMyBTYWZhcmkvNTM3LjM2IApBY2NlcHQ6ICovKgpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAKCg==\n']
+            ['[2020-09-17 14:08:35+0900]', '193.118.53.194', '192.168.0.7:443', '"GET / HTTP/1.1"', '404', 'False', 'R0VUIC8gSFRUUC8xLjEKSG9zdDogMTMzLjE0LjE0LjI0NwpVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNjAuMC4zMTEyLjExMyBTYWZhcmkvNTM3LjM2IApBY2NlcHQ6ICovKgpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAKCg==\n']
             """
 
             #　表示対象の作成
@@ -1238,7 +1152,7 @@ def logch_limited(path):
 
             """
             #スプリットされたアクセスログの例
-            ['[2020-09-17 14:08:35+0900]', '193.118.53.194', '133.14.14.247:443', '"GET / HTTP/1.1"', '404', 'False', 'R0VUIC8gSFRUUC8xLjEKSG9zdDogMTMzLjE0LjE0LjI0NwpVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNjAuMC4zMTEyLjExMyBTYWZhcmkvNTM3LjM2IApBY2NlcHQ6ICovKgpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAKCg==\n']
+            ['[2020-09-17 14:08:35+0900]', '193.118.53.194', '192.168.0.7:443', '"GET / HTTP/1.1"', '404', 'False', 'R0VUIC8gSFRUUC8xLjEKSG9zdDogMTMzLjE0LjE0LjI0NwpVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNjAuMC4zMTEyLjExMyBTYWZhcmkvNTM3LjM2IApBY2NlcHQ6ICovKgpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAKCg==\n']
             """
 
             #　表示
@@ -1268,7 +1182,7 @@ def logch_find(path,s,flag):
 
             """
             #スプリットされたアクセスログの例
-            ['[2020-09-17 14:08:35+0900]', '193.118.53.194', '133.14.14.247:443', '"GET / HTTP/1.1"', '404', 'False', 'R0VUIC8gSFRUUC8xLjEKSG9zdDogMTMzLjE0LjE0LjI0NwpVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNjAuMC4zMTEyLjExMyBTYWZhcmkvNTM3LjM2IApBY2NlcHQ6ICovKgpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAKCg==\n']
+            ['[2020-09-17 14:08:35+0900]', '193.118.53.194', '192.168.0.7:443', '"GET / HTTP/1.1"', '404', 'False', 'R0VUIC8gSFRUUC8xLjEKSG9zdDogMTMzLjE0LjE0LjI0NwpVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNjAuMC4zMTEyLjExMyBTYWZhcmkvNTM3LjM2IApBY2NlcHQ6ICovKgpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAKCg==\n']
             """
 
             #　発見、表示
@@ -1312,7 +1226,7 @@ def logchnum(path):
 
             """
             #スプリットされたアクセスログの例
-            ['[2020-09-17 14:08:35+0900]', '193.118.53.194', '133.14.14.247:443', '"GET / HTTP/1.1"', '404', 'False', 'R0VUIC8gSFRUUC8xLjEKSG9zdDogMTMzLjE0LjE0LjI0NwpVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNjAuMC4zMTEyLjExMyBTYWZhcmkvNTM3LjM2IApBY2NlcHQ6ICovKgpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAKCg==\n']
+            ['[2020-09-17 14:08:35+0900]', '193.118.53.194', '192.168.0.7:443', '"GET / HTTP/1.1"', '404', 'False', 'R0VUIC8gSFRUUC8xLjEKSG9zdDogMTMzLjE0LjE0LjI0NwpVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNjAuMC4zMTEyLjExMyBTYWZhcmkvNTM3LjM2IApBY2NlcHQ6ICovKgpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAKCg==\n']
             """
             #　時間取得
             dt = datetime.strptime(l[0],"[%Y-%m-%d %H:%M:%S%z]")
@@ -1639,7 +1553,7 @@ def c_ip_particular(args):
 def c_pcapch_particular(args,nation):
     global reader
     pc = PcapClass
-    server = ["192.168.0.6","133.14.14.246","192.168.0.7","133.14.14.247","192.168.0.8","133.14.14.248","133.14.14.245"]
+    server = ["192.168.0.6","192.168.0.7","192.168.0.8"]
 
     #　パケットの番号、pcapヘッダの長さ、パケットヘッダの長さ
     cpall = 0
@@ -1728,14 +1642,8 @@ def c_pcapch_particular(args,nation):
                     #　TLS\SSLとHTTP
                     else:
                         if tcp_src == 443 or tcp_dst == 443:
-                            # 応急処置
-                            if "6sd_1123.pcap" in file and pck_count == 751:
-                                pass
-                            elif "6sd_1123.pcap" in file and pck_count == 759:
-                                pass
-                            else:
-                                #tls_rec, tls_access, tls_res = pc.tls(buf)
-                                tls_rec, tls_access = pc.tls(buf)
+                            #tls_rec, tls_access, tls_res = pc.tls(buf)
+                            tls_rec, tls_access = pc.tls(buf,ip_src)
                         else:
                             try:
                                 temp += hex(buf[1]).replace("0x","")
@@ -1838,7 +1746,7 @@ def c_pcapch_particular(args,nation):
 def c_pcapch_particular_plus(args,nation):
     global reader
     pc = PcapClass
-    server = ["192.168.0.6","133.14.14.246","192.168.0.7","133.14.14.247","192.168.0.8","133.14.14.248","133.14.14.245"]
+    server = ["192.168.0.6","192.168.0.7","192.168.0.8"]
 
     #　パケットの番号、pcapヘッダの長さ、パケットヘッダの長さ
     cpall = 0
@@ -1927,14 +1835,8 @@ def c_pcapch_particular_plus(args,nation):
                     #　TLS\SSLとHTTP
                     else:
                         if tcp_src == 443 or tcp_dst == 443:
-                            # 応急処置
-                            if "6sd_1123.pcap" in file and pck_count == 751:
-                                pass
-                            elif "6sd_1123.pcap" in file and pck_count == 759:
-                                pass
-                            else:
-                                #tls_rec, tls_access, tls_res = pc.tls(buf)
-                                tls_rec, tls_access = pc.tls(buf)
+                            #tls_rec, tls_access, tls_res = pc.tls(buf)
+                            tls_rec, tls_access = pc.tls(buf,ip_src)
                         else:
                             try:
                                 temp += hex(buf[1]).replace("0x","")
@@ -2048,9 +1950,8 @@ if __name__ == '__main__':
     parser.add_argument('-lf','--logch_find',nargs="+",type=str,help="python3 hpot.py -lf sample_log/8_https_1208 ...")
     parser.add_argument('-ln','--logchnum',nargs="+",type=str,help="python3 hpot.py -ln sample_log/8_https_1208 ...")
     parser.add_argument('-m','--make',nargs="+",type=str,help="python3 hpot.py -m sample_log/8_https_1208 ...")
-    parser.add_argument('-i','--integrate',nargs='+',type=str,help="python3 hpot.py -i reqs1015 reqs1016 ...")
-    parser.add_argument('-fi','--final_integrate',nargs='+',type=str,help="python3 hpot.py -fi reqs1015 reqs1016 ...")
-    parser.add_argument('-d','--diff',nargs=2,help="python3 hpot.py -d ireq ireqs")
+    parser.add_argument('-i','--integrate',nargs='+',type=str,help="python3 hpot.py -i 8_https_1208_request 7_https_1208_request ...")
+    parser.add_argument('-d','--diff',nargs=2,help="python3 hpot.py -d 8_https_1208_request 8_http_1208_request ")
     parser.add_argument('-p','--pcapch',nargs=1,type=str,help="python3 hpot.py -p sample_log/6_https_1208.pcap")
     parser.add_argument('-cia','--c_ip_all',nargs='+',type=str,help="python3 hpot.py -cia sample_log/8_https_1208 ...")
     parser.add_argument('-cip','--c_ip_particular',nargs='+',type=str,help="python3 hpot.py -cip sample_log/8_https_1208 ...")
@@ -2117,9 +2018,6 @@ if __name__ == '__main__':
     elif args.integrate:
         args = args.integrate
         integrate(args)
-    elif args.final_integrate:
-        args = args.final_integrate
-        final_integrate(args)
     elif args.diff:
         args = args.diff
         diff(args[0],args[1])

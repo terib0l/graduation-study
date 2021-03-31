@@ -1,8 +1,9 @@
 # Graduation-study
 
 ## Description
-This is my graduation-study record.  
-I studied about honeypot on HTTPS. 
+This is one of my graduation-study record.  
+I studied about honeypot on HTTPS.
+This is dirty code, but I leave it as a memorial. 
 
 ## Contents
 * hpot.py : script for parse log
@@ -142,10 +143,10 @@ $ cat cip_アメリカ合衆国.txt
 ※ multiple arguments can be specified
 ```
 $ python3 hpot.py -m sample_log/8_https_1208
-make out in current directory as reqs1208
+make out in current directory as 8_https_1208_request
 ```
 ```
-$ cat reqs1208
+$ cat 8_https_1208_request
 "GET / HTTP/1.1"%%%%10
 "GET /actuator/health HTTP/1.1"%%%%1
 "GET /console/ HTTP/1.1"%%%%1
@@ -165,15 +166,46 @@ $ cat reqs1208
 > < option i >  
 ※ multiple arguments can be specified
 ```
+$ python3 hpot.py -i 8_https_1208_request 7_https_1208_request
+make out in current directory as https_integrate_request
 ```
-
-> < option fi >  
-※ multiple arguments can be specified
 ```
+$ cat https_integrate_request
+"GET / HTTP/1.0"%%%%2
+"GET / HTTP/1.1"%%%%19
+"GET /actuator/health HTTP/1.1"%%%%2
+"GET /console/ HTTP/1.1"%%%%2
+"GET /?XDEBUG_SESSION_START=phpstorm HTTP/1.1"%%%%2
+"GET /owa/auth/logon.aspx?url=https%3a%2f%2f1%2fecp%2f HTTP/1.1"%%%%2
+"GET /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1"%%%%2
+"GET /wp-content/plugins/wp-file-manager/readme.txt HTTP/1.1"%%%%2
+"GET /index.php?s=/Index/\think\app/invokefunction&function=call_user_func_array&vars[0]=md5&vars[1][]=HelloThinkPHP21 HTTP/1.1"%%%%2
+"GET /remote/fgt_lang?lang=/../../../..//////////dev/cmdb/sslvpn_websession HTTP/1.1"%%%%2
+"POST /Autodiscover/Autodiscover.xml HTTP/1.1"%%%%2
+"POST /api/jsonws/invoke HTTP/1.1"%%%%2
+"POST /autodiscover HTTP/1.1"%%%%2
+"POST /mifs/.;/services/LogService HTTP/1.1"%%%%2
+"POST /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1"%%%%2
 ```
 
 > < option d >
 ```
+$ python3 hpot.py -d 8_http_1208_request 8_https_1208_request
+make out in current directory as diff
+8_https_1208_request - 8_http_1208_request = diff
+```
+```
+$ cat diff
+"GET /?XDEBUG_SESSION_START=phpstorm HTTP/1.1"
+"GET /owa/auth/logon.aspx?url=https%3a%2f%2f1%2fecp%2f HTTP/1.1"
+"GET /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1"
+"GET /wp-content/plugins/wp-file-manager/readme.txt HTTP/1.1"
+"GET /index.php?s=/Index/\think\app/invokefunction&function=call_user_func_array&vars[0]=md5&vars[1][]=HelloThinkPHP21 HTTP/1.1"
+"GET /remote/fgt_lang?lang=/../../../..//////////dev/cmdb/sslvpn_websession HTTP/1.1"
+"POST /Autodiscover/Autodiscover.xml HTTP/1.1"
+"POST /autodiscover HTTP/1.1"
+"POST /mifs/.;/services/LogService HTTP/1.1"
+"POST /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1"
 ```
 
 ***- parse pcapfile***
@@ -316,12 +348,42 @@ No.18 128.14.133.58(34522)  [2020-12-08 01:09:05]
 > < option cpp >  
 ※ multiple arguments can be specified
 ```
+$ python3 hpot.py -cpp sample_log/8_https_1208.pcap
+Input Country:アメリカ合衆国
+sample_log/8_https_1208.pcap  :  43
+####################
+0-1:	0
+1-2:	4
+2-3:	3
+3-4:	1
+4-5:	1
+5-6:	0
+6-7:	1
+7-8:	3
+8-9:	0
+9-10:	1
+10-11:	2
+11-12:	15
+12-13:	0
+13-14:	0
+14-15:	1
+15-16:	2
+16-17:	1
+17-18:	0
+18-19:	2
+19-20:	0
+20-21:	0
+21-22:	5
+22-23:	0
+23-24:	1
+####################
+43
 ```
 
 > < option cppp >  
 ※ multiple arguments can be specified
 ```
+$ python3 hpot.py -cppp sample_log/8_https_1208.pcap
+Input Country:アメリカ合衆国
+"128.14.152.46" "128.14.133.58" "192.241.238.207" "216.243.31.2" "205.185.119.203" "205.185.122.97" "146.88.240.4" "146.88.240.12" "35.232.145.68" "173.230.152.228" "192.241.234.126" "67.205.149.169" "128.1.91.202" "128.14.134.134" "184.105.139.123" "184.105.139.67" "71.6.232.7" "192.35.168.20" "192.35.168.16" "192.35.168.43" "192.35.168.32" "192.241.219.38" "35.232.153.15" "192.241.237.44" "156.96.117.185"
 ```
-
-## Reference
-* WOWHoneypot
