@@ -1,15 +1,16 @@
-from datetime import datetime
 import os
 import sys
 import binascii
 import argparse
 import base64
 import re
-import geoip2.database
 import time
-#import datetime
+from datetime import datetime
 
+# around GeoIP
+import geoip2.database
 reader = geoip2.database.Reader('GeoLite2-City_20201027/GeoLite2-City.mmdb')
+
 save = None
 
 class PcapClass:
