@@ -1,15 +1,29 @@
 # Graduation-study
 
 ## Description
+
 This is one of my graduation-study record.  
 I studied about honeypot on HTTPS.
 This is dirty code, but I leave it as a memorial. 
 
 ## Contents
-* hpot.py : script for parse log
-* sample log
-    * honeypot-log
-    * pcapfile
+
+.
+├── GeoLite2-City_20201027
+│   └── GeoLite2-City.mmdb
+├── README.md
+├── hpot.py
+└── sample_log
+    ├── 6_https_1208
+    ├── 6_https_1208.pcap
+    ├── 7_http_1208
+    ├── 7_http_1208.pcap
+    ├── 7_https_1208
+    ├── 7_https_1208.pcap
+    ├── 8_http_1208
+    ├── 8_http_1208.pcap
+    ├── 8_https_1208
+    └── 8_https_1208.pcap
 
 ## How to use 'hpot.py'
 Option name is sloppy !

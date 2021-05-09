@@ -11,7 +11,7 @@ from datetime import datetime
 import geoip2.database
 reader = geoip2.database.Reader('GeoLite2-City_20201027/GeoLite2-City.mmdb')
 
-save = None
+savePacket = None
 
 class PcapClass:
     def pcap_header(buf):
@@ -436,14 +436,14 @@ class PcapClass:
 
     def tls(buf,ip_src):
         #　TLSハンドシェイクのデータが分割されていた場合の対処
-        global save
+        global savePacket
 
-        if save is None:
+        if savePacket is None:
             pass
         else:
-            if ip_src == save[1]:
-                buf = save[0] + buf
-                save = None
+            if ip_src == savePacket[1]:
+                buf = savePacket[0] + buf
+                savePacket = None
 
         all_len = len(buf)
         j = 0
@@ -494,7 +494,7 @@ class PcapClass:
             except:
                 #　残りを保存
                 if content == 22:
-                    save = [buf[(j-5):all_len],ip_src]
+                    savePacket = [buf[(j-5):all_len],ip_src]
                 else:
                     tls_rec += "Continuation_Data "
                 break
@@ -552,7 +552,7 @@ class PcapClass:
                 if temp == "102":
                     tls_access += 1
                     tls_rec += "ClientHello (SSLv2) "
-                    save = None
+                    savePacket = None
                     break
                 else:
                     tls_rec += "Unknown_TLS_Record "
