@@ -9,25 +9,36 @@ This is dirty code, but I leave it as a memorial.
 ## Contents
 
 ```
-.  
-├── GeoLite2-City_20201027  
-│   └── GeoLite2-City.mmdb  
-├── README.md  
-├── hpot.py  
-└── sample_log  
-    ├── 6_https_1208  
-    ├── 6_https_1208.pcap  
-    ├── 7_http_1208  
-    ├── 7_http_1208.pcap  
-    ├── 7_https_1208  
-    ├── 7_https_1208.pcap  
-    ├── 8_http_1208  
-    ├── 8_http_1208.pcap  
-    ├── 8_https_1208  
-    └── 8_https_1208.pcap
+.
+├── README.md
+├── geolite
+│   ├── GeoLite2-City_20201027
+│   │   └── GeoLite2-City.mmdb
+│   ├── __init__.py
+│   └── mmdb.py
+├── hpot.py
+├── option
+│   ├── __init__.py
+│   ├── hlog.py
+│   └── pcap.py
+├── sample_log
+│   ├── 6_https_1208
+│   ├── 6_https_1208.pcap
+│   ├── 7_http_1208
+│   ├── 7_http_1208.pcap
+│   ├── 7_https_1208
+│   ├── 7_https_1208.pcap
+│   ├── 8_http_1208
+│   ├── 8_http_1208.pcap
+│   ├── 8_https_1208
+│   └── 8_https_1208.pcap
+└── tcpclass
+    ├── __init__.py
+    └── layer.py
 ```
 
-## How to use 'hpot.py'
+## Usage
+Main Program is hpot.py.
 Option name is sloppy !
 
 ***- parse honeypot-log***
