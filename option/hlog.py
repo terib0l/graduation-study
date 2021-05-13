@@ -228,7 +228,7 @@ def c_ip_all(args):
                 request = l[3]
                 ip = l[1]
 
-                if 'GET' in request:
+                if 'get' in request:
                     if len(request) <= 20:
                         if request in get.keys():
                             if ip not in get[request]:
@@ -257,7 +257,7 @@ def c_ip_all(args):
                         else:
                             get3[request] = []
                             get3[request].append(ip)
-                elif 'POST' in request:
+                elif 'post' in request:
                     if request in post.keys():
                         if ip not in post[request]:
                             post[request].append(ip)

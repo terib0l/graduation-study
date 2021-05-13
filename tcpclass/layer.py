@@ -428,8 +428,7 @@ class PcapClass:
 
         if savePacket is None:
             pass
-        else:
-            if ip_src == savePacket[1]:
+        elif ip_src == savePacket[1]:
                 buf = savePacket[0] + buf
                 savePacket = None
 

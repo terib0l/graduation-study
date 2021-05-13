@@ -15,20 +15,25 @@ desc = """ #研究用 #WOWHoneypot #HTTP #HTTPS #PCAP"""
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=desc)
+
+    # Parse Option For Honeypot-log
     parser.add_argument('-l','--logch',nargs=1,type=str,help="python3 hpot.py -l sample_log/8_https_1208")
     parser.add_argument('-ll','--logch_limited',nargs="+",type=str,help="python3 hpot.py -ll sample_log/8_https_1208 ...")
     parser.add_argument('-lf','--logch_find',nargs="+",type=str,help="python3 hpot.py -lf sample_log/8_https_1208 ...")
     parser.add_argument('-ln','--logchnum',nargs="+",type=str,help="python3 hpot.py -ln sample_log/8_https_1208 ...")
+    parser.add_argument('-cia','--c_ip_all',nargs='+',type=str,help="python3 hpot.py -cia sample_log/8_https_1208 ...")
+    parser.add_argument('-cip','--c_ip_particular',nargs='+',type=str,help="python3 hpot.py -cip sample_log/8_https_1208 ...")
     parser.add_argument('-m','--make',nargs="+",type=str,help="python3 hpot.py -m sample_log/8_https_1208 ...")
     parser.add_argument('-i','--integrate',nargs='+',type=str,help="python3 hpot.py -i 8_https_1208_request 7_https_1208_request ...")
     parser.add_argument('-d','--diff',nargs=2,help="python3 hpot.py -d 8_https_1208_request 8_http_1208_request ")
+
+    # Parse Option For Pcap-file
     parser.add_argument('-p','--pcapch',nargs=1,type=str,help="python3 hpot.py -p sample_log/6_https_1208.pcap")
-    parser.add_argument('-cia','--c_ip_all',nargs='+',type=str,help="python3 hpot.py -cia sample_log/8_https_1208 ...")
-    parser.add_argument('-cip','--c_ip_particular',nargs='+',type=str,help="python3 hpot.py -cip sample_log/8_https_1208 ...")
     parser.add_argument('-cpp','--c_pcapch_particular',nargs='+',type=str,help="python3 hpot.py -cpp sample_log/8_https_1208.pcap ...")
     parser.add_argument('-cppp','--c_pcapch_particular_plus',nargs='+',type=str,help="python3 hpot.py -cppp sample_log/8_https_1208.pcap ...")
     args = parser.parse_args()
 
+    # Each Option Process
     if args.logch:
         path = args.logch
         hlog.logch(path[0])
@@ -77,10 +82,12 @@ if __name__ == '__main__':
         for c in c_list:
             key, value = c
             print("{0}\t{1}\t{2}%".format(key,value,round(value/c_all,2)*100))
-        """print("All: ",access)
-        for i in range(0,len(time)):
-            print("{0} : {1}".format(i+1,time[i]))
-        """
+    elif args.c_ip_all:
+        args = args.c_ip_all
+        hlog.c_ip_all(args)
+    elif args.c_ip_particular:
+        args = args.c_ip_particular
+        hlog.c_ip_particular(args)
     elif args.make:
         args = args.make
         for i in range(0,len(args)):
@@ -94,12 +101,6 @@ if __name__ == '__main__':
     elif args.pcapch:
         args = args.pcapch
         pcap.pcapch(args[0])
-    elif args.c_ip_all:
-        args = args.c_ip_all
-        hlog.c_ip_all(args)
-    elif args.c_ip_particular:
-        args = args.c_ip_particular
-        hlog.c_ip_particular(args)
     elif args.c_pcapch_particular:
         args = args.c_pcapch_particular
         nation = input("Input Country:")
