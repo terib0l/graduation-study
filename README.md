@@ -41,7 +41,7 @@ This is dirty code, but I leave it as a memorial.
 Main Program is hpot.py.
 Option name is sloppy !
 
-***- parse honeypot-log***
+### parse honeypot-log
 > < option l >
 ```
 $ python3 hpot.py -l sample_log/8_https_1208
@@ -235,7 +235,7 @@ $ cat diff
 "POST /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1"
 ```
 
-***- parse pcapfile***
+## parse pcapfile
 > < option p >
 ```
 $ python3 hpot.py -p sample_log/8_https_1208.pcap
